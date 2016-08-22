@@ -1,0 +1,207 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Javascrip - Promises</title>
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+        <section data-notes="">
+          <h3>Javascript</h3>
+          <h1>Promises<h1>
+        </section>
+
+        <section data-notes="Which means that two bits of scripts cannot run at the same time (synchronous), they have to run one after another. I think of this as in a two lanes road that must turn right, but only the curb lane can turn on red. Meaning that only one car can turn at a time on a red light. That's what single threaded means. Let's look an example">
+          <h3 id="fragments"><strong>Javascript</strong></h3>
+          <p><span class="fragment"> is single threaded</span></p>
+        </section>
+
+        <section data-markdown data-notes="Imagine this scenario. we want to open a file and write to it. We first have to open to the file, wait until it is open then write to it. This wating time may be short or may take long we don't know.">
+          <script type="text/template">
+          ## Syncronous Script
+          ```
+            fileObject = open(file);
+            # after we WAITED for the file to open, we can write to it
+
+            fileObject.write('We are writing to the file!');
+            # After we wrote on the file, we can continue doing other things unrelated to this.
+
+          ```
+          </script>
+        </section>
+
+        <section data-markdown data-notes="What is a callback? a callback is a function that is passed as an argument to another function and is invoked after some kind of event. Once the parent function completes the function passed as an argument is then called. Callbacks are most used when code needs to be run asynchronously. Meaning that the order in which these are executed isn't predicted. Which is the case of Events and AJAX requests. (AJAX stands for Asynchronous JavaScript and XML. In short, it is the use of the XMLHttpRequest object to communicate with server-side scripts. It can send as well as receive information in a variety of formats, including JSON, XML, HTML, and even text files.). We can't know how long the server will take to respond with to respond or when the users will click a button and bring up other events, much less know which order they'll do it. So we use callbacks to essensially say: 'When this asynchronous operation completes, do X, where X is the code in your callback function'. In this example, we have a button component, we add an event listener 'Onclick to it', even though we don't pass the handleViewMoreClick function in the parameter, this is still considered as a callback">
+					<script type="text/template">
+          ## Behold! Callbacks
+          ```
+          ...
+          <Button
+            ...
+            onClick={ () => this.handleViewMoreClick() }
+            ...
+          </Button>
+          ...
+          ```
+					</script>
+        </section>
+
+        <section>
+          <img src="images/huh.gif" alt="">
+        </section>
+
+        <section data-markdown data-notes="Why do we use callbacks? Because we don't want to wait for one simple command to finish to request another command, we let the code, the server or the system decide when to respond to our requests when it's ready.">
+					<script type="text/template">
+          ## Callbacks (Aka Asyncronous Script)
+          ```
+          // Pseudocode
+
+          // callback function
+          function awesome() { console.log("You're awesome") }
+
+          // method which accepts the callback function
+          function printName(name, callback) { console.log(`Hello ${name}`) }
+
+          // driver function
+          function event() {
+            printName(("Diego", awesome())
+          }
+
+          ```
+					</script>
+        </section>
+
+        <section data-notes="Why do we use callbacks? Because we don't want to wait for one simple command to finish to request another command, we let the code, the server or the system decide when to respond to our requests when it's ready.">
+          <h2>Callbacks (Aka Asyncronous Script)</h2>
+          <img src="images/name.png" alt="">
+        </section>
+
+				<section data-markdown data-notes="As we expected this all led us to Promises. and promises is all about asynchronous computations.. As you can see we did not instantiate our promise with 'new Promise' class, the 'then' method in this case is sufficient to tell our method that we are expecting a promise. Basically a Promise is a placeholder object that represents the result of an async operation. This object will hold the info about the status of the async operation and will notify us when the async operation succeds or fails. We could have added another method there called catch for error handling.">
+          <script type="text/template">
+          ## Promises
+          ```
+          ...
+          export mapApiKeyRetrievedAction = createAction('seamless/storeLocator/MAP_API_KEY_RETRIEVED');
+
+
+          export const fetchStoreMapApiKeyAction = () => {
+            return (dispatch, getState, client) => {
+              return client.query({
+                query: gql`
+                  query mapApiKey {
+                    mapApiKey
+                  }
+                `
+              }).then((data) => {
+                dispatch(mapApiKeyRetrievedAction(data.data.mapApiKey));
+              });
+            };
+          };
+
+          ```
+          </script>
+        </section>
+
+				<section data-markdown data-notes="A simple example of promises using then, notice how the then method gets receives the return value of the last evaluation of the last expression.">
+          <script type="text/template">
+          ## The "Then" method
+          ```
+          let promise = new Promise(function(resolve, reject) {
+            resolve(1);
+          });
+
+          promise.then(function(val) {
+            console.log(val): // 1
+            return val + 2;
+          }).then(function(val){
+            console.log(val); // 3
+          })
+          ```
+          </script>
+        </section>
+
+				<section data-notes="A simple example of promises using then, notice how the then method gets receives the return value of the last evaluation of the last expression.">
+          <h2>The "Then" method</h2>
+          <img src="images/promise.png">
+        </section>
+
+				<section data-notes="">
+          <h2>Take Away</h2>
+          <ul id="fragments">
+            <li class="fragment">Event's are great for things that can happen multiple times on the same object.</li>
+            <li class="fragment">Callbacks can be used for simple functions, but can get our of hand quickly.</li>
+            <li class="fragment">Promises are better in the sense that it is more composeable. (Can be combined into multiple promises together).</li>
+          </ul>
+        </section>
+
+				<section data-notes="">
+          <h2>The End</h2>
+        </section>
+
+				<section data-notes="">
+          <h2>Or is It?</h2>
+        </section>
+
+				<section data-notes="">
+          <img src="images/cody.png">
+        </section>
+
+				<section data-notes="">
+          <img src="images/cody1.png">
+        </section>
+
+				<section data-notes="">
+          <img src="images/cody2.png">
+        </section>
+
+				<section data-notes="">
+          <img src="images/cody3.png">
+        </section>
+
+				<section data-notes="">
+          <img src="images/cody4.png">
+        </section>
+
+				<section data-notes="">
+          <img src="images/cody5.png">
+        </section>
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				history: true,
+
+				// More info https://github.com/hakimel/reveal.js#dependencies
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+				]
+			});
+		</script>
+	</body>
+</html>
+
